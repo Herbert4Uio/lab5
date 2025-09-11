@@ -36,16 +36,42 @@ class FileTaskRepository implements TaskRepositoryInterface
 
     public function find(int $id): ?array
     {
-        return [];
+        $this->ensureFolderExists();
+        $filePath = "{$this->folder}/{$id}.json";
+        if (Storage::exists($filePath)) {
+            return json_decode(Storage::get($filePath), true);
+        }
+        return null;
     }
 
     public function update(int $id, array $data): ?array
     {
-        return [];
+        $this->ensureFolderExists();
+        $filePath = "{$this->folder}/{$id}.json";
+        
+        if (!Storage::exists($filePath)) {
+            return null;
+        }
+        
+        $currentData = json_decode(Storage::get($filePath), true);
+        
+        $updatedData = array_merge($currentData, $data);
+        
+        Storage::put($filePath, json_encode($updatedData, JSON_PRETTY_PRINT));
+        
+        return $updatedData;
     }
 
     public function delete(int $id): bool
     {
+        $this->ensureFolderExists();
+        $filePath = "{$this->folder}/{$id}.json";
+        
+        if (Storage::exists($filePath)) {
+            Storage::delete($filePath);
+            return true;
+        }
+        
         return false;
     }
 }
