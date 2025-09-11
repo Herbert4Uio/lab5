@@ -60,11 +60,11 @@ class TaskController extends Controller
     public function destroy($id)
     {
         $deleted = $this->tasks->delete((int) $id);
-        
+    
         if (!$deleted) {
             return response()->json(['error' => 'Task not found'], 404);
         }
-        
-        return response()->json(null, 204);
+    
+        return response()->json(['message' => 'Eliminado correctamente'], 200);
     }
 }
